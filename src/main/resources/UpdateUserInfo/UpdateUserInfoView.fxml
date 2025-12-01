@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Line?>
+
+<AnchorPane prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="UpdateUserInfo.UpdateUserInfoController">
+  <children>
+    <ImageView fitHeight="748.0" fitWidth="1294.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+        <Image url="@../assets/images/Dashboard/DashboardBackground.png" />
+      </image></ImageView>
+    <Label layoutX="122.0" layoutY="5.0" prefHeight="108.0" prefWidth="1171.0" styleClass="HeaderLabel" text="Your Information" />
+    <Button layoutX="14.0" layoutY="138.0" mnemonicParsing="false" onMouseClicked="#onDashboardButtonClicked" prefHeight="83.0" prefWidth="83.0" styleClass="Login-Button">
+      <graphic>
+        <ImageView fitHeight="58.0" fitWidth="69.0" onMouseClicked="#onDashboardButtonClicked" pickOnBounds="true" preserveRatio="true">
+          <image>
+            <Image url="@../assets/images/Dashboard/DashboardIcon.png" />
+          </image>
+        </ImageView>
+      </graphic></Button>
+    <Button layoutX="14.0" layoutY="236.0" mnemonicParsing="false" onMouseClicked="#onUserManagerButtonClicked" prefHeight="83.0" prefWidth="83.0" styleClass="Login-Button">
+      <graphic>
+        <ImageView fitHeight="43.0" fitWidth="43.0" pickOnBounds="true" preserveRatio="true">
+          <image>
+            <Image url="@../assets/images/UserManager/UserManagerIcon.png" />
+          </image>
+        </ImageView>
+      </graphic>
+    </Button>
+    <Button layoutX="14.0" layoutY="334.0" mnemonicParsing="false" prefHeight="83.0" prefWidth="83.0" styleClass="Login-Button">
+      <graphic>
+        <ImageView fitHeight="43.0" fitWidth="43.0" onMouseClicked="#onDocumentManagerButtonClicked" pickOnBounds="true" preserveRatio="true">
+          <image>
+            <Image url="@../assets/images/DocumentManager/DocumentManagerIcon.png" />
+          </image>
+        </ImageView>
+      </graphic>
+    </Button>
+    <Button layoutX="14.0" layoutY="430.0" mnemonicParsing="false" prefHeight="83.0" prefWidth="83.0" styleClass="Login-Button">
+      <graphic>
+        <ImageView fitHeight="43.0" fitWidth="43.0" pickOnBounds="true" preserveRatio="true">
+          <image>
+            <Image url="@../assets/images/DocumentSearch/DocumentSearchIcon.png" />
+          </image>
+        </ImageView>
+      </graphic>
+    </Button>
+    <Button layoutX="14.0" layoutY="622.0" mnemonicParsing="false" onMouseClicked="#onLogoutButtonClicked" prefHeight="83.0" prefWidth="83.0" styleClass="Login-Button">
+      <graphic>
+        <ImageView fitHeight="43.0" fitWidth="43.0" pickOnBounds="true" preserveRatio="true">
+          <image>
+            <Image url="@../assets/images/Logout/LogoutIcon.png" />
+          </image>
+        </ImageView>
+      </graphic>
+    </Button>
+    <Button layoutX="1196.0" layoutY="17.0" mnemonicParsing="false" prefHeight="83.0" prefWidth="83.0" styleClass="Login-Button">
+      <graphic>
+        <ImageView fitHeight="43.0" fitWidth="43.0" pickOnBounds="true" preserveRatio="true">
+          <image>
+            <Image url="@../assets/images/UpdateUserInfo/UpdateUserInfo.png" />
+          </image>
+        </ImageView>
+      </graphic>
+    </Button>
+      <TextField fx:id="userName" editable="false" layoutX="261.0" layoutY="275.0" prefHeight="50.0" prefWidth="300.0" promptText="Username" styleClass="Username-text-field" />
+      <TextField fx:id="userId" editable="false" layoutX="261.0" layoutY="146.0" prefHeight="50.0" prefWidth="300.0" promptText="UserID" styleClass="Username-text-field" />
+      <TextField fx:id="fullName" editable="false" layoutX="261.0" layoutY="212.0" prefHeight="50.0" prefWidth="300.0" promptText="Full name" styleClass="Username-text-field" />
+      <TextField fx:id="passwordHash" editable="false" layoutX="261.0" layoutY="342.0" prefHeight="50.0" prefWidth="300.0" promptText="Password Hash" styleClass="Username-text-field" />
+      <TextField fx:id="email" editable="false" layoutX="261.0" layoutY="408.0" prefHeight="50.0" prefWidth="300.0" promptText="Email" styleClass="Username-text-field" />
+      <TextField fx:id="role" editable="false" layoutX="261.0" layoutY="472.0" prefHeight="50.0" prefWidth="300.0" promptText="Role" styleClass="Username-text-field" />
+      <Line endX="59.33331298828125" endY="-13.333328247070312" fill="#10a0aa" layoutX="676.0" layoutY="148.0" startX="59.33331298828125" startY="400.33331298828125" stroke="#10a0aa" strokeLineCap="ROUND" strokeWidth="3.0" />
+      <PasswordField fx:id="oldPassword" layoutX="896.0" layoutY="211.0" prefHeight="50.0" prefWidth="300.0" promptText="Old password" styleClass="Password-field" />
+      <PasswordField fx:id="newPassword" layoutX="896.0" layoutY="275.0" prefHeight="50.0" prefWidth="300.0" promptText="New password" styleClass="Password-field" />
+      <PasswordField fx:id="reNewPassword" layoutX="896.0" layoutY="339.0" prefHeight="50.0" prefWidth="300.0" promptText="Re-type new password" styleClass="Password-field" />
+      <Button layoutX="940.0" layoutY="433.0" mnemonicParsing="false" onMouseClicked="#onChangePasswordButtonClicked" prefHeight="50.0" prefWidth="199.0" styleClass="Login-Button" text="Change password" />
+  </children>
+</AnchorPane>

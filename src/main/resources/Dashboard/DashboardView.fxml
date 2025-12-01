@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Dashboard.DashboardController">
+   <children>
+      <ImageView fitHeight="748.0" fitWidth="1294.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../assets/images/Dashboard/DashboardBackground.png" />
+         </image></ImageView>
+      <Label layoutX="122.0" layoutY="5.0" prefHeight="108.0" prefWidth="1171.0" styleClass="HeaderLabel" text="Dashboard" />
+      <Button layoutX="14.0" layoutY="138.0" mnemonicParsing="false" prefHeight="83.0" prefWidth="83.0" styleClass="Login-Button">
+         <graphic>
+            <ImageView fitHeight="58.0" fitWidth="69.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../assets/images/Dashboard/DashboardIcon.png" />
+               </image>
+            </ImageView>
+         </graphic></Button>
+      <Button layoutX="14.0" layoutY="236.0" mnemonicParsing="false" onMouseClicked="#onUserManagerButtonClicked" prefHeight="83.0" prefWidth="83.0" styleClass="Login-Button">
+         <graphic>
+            <ImageView fitHeight="43.0" fitWidth="43.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../assets/images/UserManager/UserManagerIcon.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
+      <Button layoutX="14.0" layoutY="334.0" mnemonicParsing="false" onMouseClicked="#onDocumentManagerButtonClicked" prefHeight="83.0" prefWidth="83.0" styleClass="Login-Button">
+         <graphic>
+            <ImageView fitHeight="43.0" fitWidth="43.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../assets/images/DocumentManager/DocumentManagerIcon.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
+      <Button layoutX="14.0" layoutY="430.0" mnemonicParsing="false" prefHeight="83.0" prefWidth="83.0" styleClass="Login-Button">
+         <graphic>
+            <ImageView fitHeight="43.0" fitWidth="43.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../assets/images/DocumentSearch/DocumentSearchIcon.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
+      <Button layoutX="14.0" layoutY="622.0" mnemonicParsing="false" onMouseClicked="#onLogoutButtonClicked" prefHeight="83.0" prefWidth="83.0" styleClass="Login-Button">
+         <graphic>
+            <ImageView fitHeight="43.0" fitWidth="43.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../assets/images/Logout/LogoutIcon.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
+      <Button layoutX="1196.0" layoutY="17.0" mnemonicParsing="false" onMouseClicked="#onUpdateUserInfoButtonClicked" prefHeight="83.0" prefWidth="83.0" styleClass="Login-Button">
+         <graphic>
+            <ImageView fitHeight="43.0" fitWidth="43.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../assets/images/UpdateUserInfo/UpdateUserInfo.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
+
+     <ScrollPane layoutX="122.0" layoutY="126.0" prefHeight="601.0" prefWidth="694.0">
+       <VBox fx:id="documentList" spacing="10" style="-fx-padding: 10;">
+
+       </VBox>
+     </ScrollPane>
+     <AnchorPane fx:id="documentDetails" layoutX="816.0" layoutY="126.0" prefHeight="601.0" prefWidth="478.0" style="-fx-padding: 20;">
+       <ImageView fx:id="documentCover" fitHeight="150" fitWidth="100" layoutX="10" layoutY="10" />
+       <Label fx:id="documentTitle" layoutX="120" layoutY="10" maxWidth="500" wrapText="true" />
+       <Label fx:id="documentAuthor" layoutX="120" layoutY="40" maxWidth="500" wrapText="true" />
+       <Label fx:id="documentPublisher" layoutX="120" layoutY="70" maxWidth="500" wrapText="true" />
+       <Label fx:id="documentIsbn" layoutX="120" layoutY="130" maxWidth="500" wrapText="true" />
+       <Label fx:id="documentLanguage" layoutX="120" layoutY="160" maxWidth="500" wrapText="true" />
+       <Label fx:id="documentRating" layoutX="120" layoutY="190" maxWidth="500" wrapText="true" />
+       <Label fx:id="documentPageCount" layoutX="120" layoutY="220" maxWidth="500" wrapText="true" />
+       <Label fx:id="documentAmount" layoutX="120" layoutY="250" maxWidth="500" wrapText="true" />
+       <Button fx:id="borrowButton" layoutX="154.0" layoutY="501.0" onMouseClicked="#onReturnButtonClicked" styleClass="Login-Button" text="Return Document" />
+     </AnchorPane>
+   </children>
+
+</AnchorPane>

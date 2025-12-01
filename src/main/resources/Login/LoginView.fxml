@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Login.LoginController">
+   <children>
+      <ImageView fitHeight="748.0" fitWidth="1294.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../assets/images/Login/LoginBackground.png" />
+         </image></ImageView>
+      <Label layoutX="893.0" layoutY="119.0" prefHeight="62.0" prefWidth="400.0" styleClass="HeaderLabel" text="Login" />
+      <TextField fx:id="userName" layoutX="943.0" layoutY="215.0" onAction="#handleEnterKeyPress" prefHeight="50.0" prefWidth="300.0" promptText="Username" styleClass="Username-text-field" />
+      <PasswordField fx:id="password" layoutX="943.0" layoutY="295.0" onAction="#handleEnterKeyPress" prefHeight="50.0" prefWidth="300.0" promptText="Password" styleClass="Password-field" />
+      <Button layoutX="943.0" layoutY="399.0" mnemonicParsing="false" onMouseClicked="#onMouseClickedOnLogin" prefHeight="43.0" prefWidth="300.0" styleClass="Login-Button" text="Login" />
+      <Hyperlink layoutX="1128.0" layoutY="352.0" onMouseClicked="#onMouseClickedOnForgotPassWord" text="Forgot password?" />
+      <Hyperlink layoutX="999.0" layoutY="621.0" onMouseClicked="#onMouseClickedOnSignup" text="Dont have an account? Signup" />
+   </children>
+</AnchorPane>

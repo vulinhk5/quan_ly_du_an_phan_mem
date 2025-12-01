@@ -1,0 +1,108 @@
+.HeaderLabel {
+  -fx-font-size: 50px;
+  -fx-font-family: "Noto Sans";
+  -fx-font-weight: bold;
+  -fx-text-fill: rgb(18, 160, 170);
+  -fx-alignment: center;
+}
+
+.NormalLabel {
+  -fx-font-size: 16px;
+  -fx-font-family: "Noto Sans";
+  -fx-font-weight: bold;
+  -fx-text-fill: rgb(18, 160, 170);
+  -fx-alignment: center;
+}
+
+.Username-text-field {
+  -fx-background-radius: 30px;
+  -fx-border-radius: 30px;
+  -fx-padding: 5px 10px;
+  -fx-border-color: rgb(18, 160, 170);
+  -fx-border-width: 2px;
+  -fx-font-size: 16px;
+  -fx-font-family: "Noto Sans", sans-serif;
+  -fx-font-weight: bold;
+  -fx-text-fill: rgb(18, 160, 170);
+  -fx-prompt-text-fill: rgba(18, 160, 170, 0.5);
+}
+
+.Username-text-field:focused {
+  -fx-border-color: rgb(18, 160, 170);
+  -fx-text-fill: rgb(18, 160, 170);
+}
+
+.Password-field {
+  -fx-background-radius: 30px;
+  -fx-border-radius: 30px;
+  -fx-padding: 5px 10px;
+  -fx-border-color: rgb(18, 160, 170);
+  -fx-border-width: 2px;
+  -fx-font-size: 16px;
+  -fx-font-family: "Noto Sans", sans-serif;
+  -fx-font-weight: bold;
+  -fx-text-fill: rgb(18, 160, 170);
+  -fx-prompt-text-fill: rgba(18, 160, 170, 0.5);
+}
+
+.Password-field:focused {
+  -fx-border-color: rgb(18, 160, 170);
+  -fx-text-fill: rgb(18, 160, 170);
+}
+
+.Login-Button {
+  -fx-background-radius: 30px;
+  -fx-border-radius: 30px;
+  -fx-padding: 5px 10px;
+  -fx-border-color: rgb(18, 160, 170);
+  -fx-border-width: 2px;
+  -fx-font-size: 16px;
+  -fx-font-family: "Noto Sans", sans-serif;
+  -fx-font-weight: bold;
+  -fx-text-fill: white;
+  -fx-background-color: rgb(18, 160, 170);
+  -fx-hover-background-color: rgb(28, 190, 200);
+  -fx-opacity: 1;
+}
+
+.Login-Button:hover {
+  -fx-background-color: rgb(28, 190, 200);
+  -fx-border-color: rgb(28, 190, 200);
+}
+
+.Role-combo-box {
+  -fx-background-radius: 30px;
+  -fx-border-radius: 30px;
+  -fx-padding: 5px 10px;
+  -fx-border-color: rgb(18, 160, 170);
+  -fx-border-width: 2px;
+  -fx-font-size: 16px;
+  -fx-font-family: "Noto Sans", sans-serif;
+  -fx-font-weight: bold;
+  -fx-text-fill: rgb(18, 160, 170);
+  -fx-prompt-text-fill: rgba(18, 160, 170, 0.5);
+}
+
+.Role-combo-box:focused {
+  -fx-border-color: rgb(18, 160, 170);
+  -fx-text-fill: rgb(18, 160, 170);
+}
+
+.document-button {
+  -fx-min-width: 600px;
+  -fx-max-width: 600px;
+  -fx-min-height: 150px;
+  -fx-max-height: 150px;
+  -fx-border-color: rgb(18, 160, 170);
+  -fx-border-width: 2px;
+  -fx-border-radius: 10px;
+  -fx-background-radius: 10px;
+  -fx-padding: 5px;
+  -fx-font-size: 14px;
+  -fx-alignment: center;
+  -fx-text-fill: black;
+}
+
+.document-button:hover {
+  -fx-background-color: rgba(18, 160, 170, 0.1);
+}
