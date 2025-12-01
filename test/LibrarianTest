@@ -1,0 +1,112 @@
+package Core;
+
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+
+public class LibrarianTest {
+
+    // Tạo Librarian hợp lệ
+    private Librarian createValidLibrarian() {
+        return new Librarian(
+                "L01",
+                "John Doe",
+                "john123",
+                "password123",
+                "john@gmail.com"
+        );
+    }
+
+    // ===============================
+    // 1. TEST userId (EP + BVA)
+    // ===============================
+    @Test
+    public void testUserId_Null() {
+        Librarian l = createValidLibrarian();
+        l.setUserId(null);
+        assertNull(l.getUserId());
+    }
+
+    @Test
+    public void testUserId_Empty() {
+        Librarian l = createValidLibrarian();
+        l.setUserId("");
+        assertEquals("", l.getUserId());
+    }
+
+    @Test
+    public void testUserId_Valid() {
+        Librarian l = createValidLibrarian();
+        l.setUserId("L99");
+        assertEquals("L99", l.getUserId());
+    }
+
+    // ===============================
+    // 2. TEST fullName (EP + BVA)
+    // ===============================
+    @Test
+    public void testFullName_Empty() {
+        Librarian l = createValidLibrarian();
+        l.setFullName("");
+        assertEquals("", l.getFullName());
+    }
+
+    @Test
+    public void testFullName_Valid() {
+        Librarian l = createValidLibrarian();
+        l.setFullName("Alice");
+        assertEquals("Alice", l.getFullName());
+    }
+
+    // ===============================
+    // 3. TEST username
+    // ===============================
+    @Test
+    public void testUsername_Empty() {
+        Librarian l = createValidLibrarian();
+        l.setUsername("");
+        assertEquals("", l.getUsername());
+    }
+
+    @Test
+    public void testUsername_Valid() {
+        Librarian l = createValidLibrarian();
+        l.setUsername("admin01");
+        assertEquals("admin01", l.getUsername());
+    }
+
+    // ===============================
+    // 4. TEST email
+    // ===============================
+    @Test
+    public void testEmail_Empty() {
+        Librarian l = createValidLibrarian();
+        l.setEmail("");
+        assertEquals("", l.getEmail());
+    }
+
+    @Test
+    public void testEmail_Valid() {
+        Librarian l = createValidLibrarian();
+        l.setEmail("test@gmail.com");
+        assertEquals("test@gmail.com", l.getEmail());
+    }
+
+    // ===============================
+    // 5. TEST password hashing (EP)
+    // ===============================
+    @Test
+    public void testPasswordHash_NotPlaintext() {
+        Librarian l = createValidLibrarian();
+        assertNotEquals("password123", l.getPasswordHash());
+        assertEquals(128, l.getPasswordHash().length()); // SHA-512 hex length
+    }
+
+    // ===============================
+    // 6. TEST getRole()
+    // ===============================
+    @Test
+    public void testGetRole() {
+        Librarian l = createValidLibrarian();
+        assertEquals("librarian", l.getRole());
+    }
+}

@@ -1,0 +1,129 @@
+package Core;
+
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+
+// Lớp con để test User (vì User là abstract)
+class DummyUser extends User {
+    public DummyUser(String userId, String fullName, String username, String passwordHash, String email) {
+        super(userId, fullName, username, passwordHash, email);
+    }
+
+    @Override
+    public String getRole() {
+        return "dummy";
+    }
+}
+
+public class UserTest {
+
+    // Tạo user hợp lệ
+    private DummyUser createValidUser() {
+        return new DummyUser(
+                "U01",
+                "John Doe",
+                "john123",
+                "password123",
+                "john@gmail.com"
+        );
+    }
+
+    // ============================================================
+    // 1. TEST userId (EP + BVA)
+    // ============================================================
+    @Test
+    public void testUserId_Null() {
+        DummyUser u = new DummyUser(null, "A", "B", "C", "D");
+        assertNull(u.getUserId());
+    }
+
+    @Test
+    public void testUserId_Empty() {
+        DummyUser u = new DummyUser("", "A", "B", "C", "D");
+        assertEquals("", u.getUserId());
+    }
+
+    @Test
+    public void testUserId_Valid() {
+        DummyUser u = new DummyUser("U100", "A", "B", "C", "D");
+        assertEquals("U100", u.getUserId());
+    }
+
+    // ============================================================
+    // 2. TEST fullName (EP + BVA)
+    // ============================================================
+    @Test
+    public void testFullName_Empty() {
+        DummyUser u = createValidUser();
+        u.setFullName("");
+        assertEquals("", u.getFullName());
+    }
+
+    @Test
+    public void testFullName_Valid() {
+        DummyUser u = createValidUser();
+        u.setFullName("Alice");
+        assertEquals("Alice", u.getFullName());
+    }
+
+    // ============================================================
+    // 3. TEST username (chỉ có getter → test qua constructor)
+    // ============================================================
+    @Test
+    public void testUsername_Empty() {
+        DummyUser u = new DummyUser("1", "A", "", "C", "D");
+        assertEquals("", u.getUsername());
+    }
+
+    @Test
+    public void testUsername_Valid() {
+        DummyUser u = new DummyUser("1", "A", "user01", "C", "D");
+        assertEquals("user01", u.getUsername());
+    }
+
+    // ============================================================
+    // 4. TEST email
+    // ============================================================
+    @Test
+    public void testEmail_Empty() {
+        DummyUser u = createValidUser();
+        u.setEmail("");
+        assertEquals("", u.getEmail());
+    }
+
+    @Test
+    public void testEmail_Valid() {
+        DummyUser u = createValidUser();
+        u.setEmail("test@mail.com");
+        assertEquals("test@mail.com", u.getEmail());
+    }
+
+    // ============================================================
+    // 5. TEST passwordHash (SHA-512)
+    // ============================================================
+    @Test
+    public void testPasswordHash_NotPlaintext() {
+        DummyUser u = createValidUser();
+        u.setPasswordHash("mypassword");
+
+        assertNotEquals("mypassword", u.getPasswordHash());
+        assertEquals(128, u.getPasswordHash().length()); // SHA-512 hex
+    }
+
+    @Test
+    public void testPasswordHash_EmptyString() {
+        DummyUser u = createValidUser();
+        u.setPasswordHash("");
+
+        assertEquals(128, u.getPasswordHash().length());
+    }
+
+    // ============================================================
+    // 6. TEST role() override
+    // ============================================================
+    @Test
+    public void testGetRole() {
+        DummyUser u = createValidUser();
+        assertEquals("dummy", u.getRole());
+    }
+}

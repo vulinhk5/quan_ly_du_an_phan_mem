@@ -1,0 +1,112 @@
+package Core;
+
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+
+public class MemberTest {
+
+    // Hàm tạo Member hợp lệ
+    private Member createValidMember() {
+        return new Member(
+                "M01",
+                "John Wick",
+                "john123",
+                "password123",
+                "john@gmail.com"
+        );
+    }
+
+    // ============================================================
+    // 1. TEST userId (EP + BVA)
+    // ============================================================
+    @Test
+    public void testUserId_Null() {
+        Member m = createValidMember();
+        m.setUserId(null);
+        assertNull(m.getUserId());
+    }
+
+    @Test
+    public void testUserId_Empty() {
+        Member m = createValidMember();
+        m.setUserId("");
+        assertEquals("", m.getUserId());
+    }
+
+    @Test
+    public void testUserId_Valid() {
+        Member m = createValidMember();
+        m.setUserId("M99");
+        assertEquals("M99", m.getUserId());
+    }
+
+    // ============================================================
+    // 2. TEST fullName (EP + BVA)
+    // ============================================================
+    @Test
+    public void testFullName_Empty() {
+        Member m = createValidMember();
+        m.setFullName("");
+        assertEquals("", m.getFullName());
+    }
+
+    @Test
+    public void testFullName_Valid() {
+        Member m = createValidMember();
+        m.setFullName("Alice");
+        assertEquals("Alice", m.getFullName());
+    }
+
+    // ============================================================
+    // 3. TEST username
+    // ============================================================
+    @Test
+    public void testUsername_Empty() {
+        Member m = createValidMember();
+        m.setUsername("");
+        assertEquals("", m.getUsername());
+    }
+
+    @Test
+    public void testUsername_Valid() {
+        Member m = createValidMember();
+        m.setUsername("user01");
+        assertEquals("user01", m.getUsername());
+    }
+
+    // ============================================================
+    // 4. TEST email
+    // ============================================================
+    @Test
+    public void testEmail_Empty() {
+        Member m = createValidMember();
+        m.setEmail("");
+        assertEquals("", m.getEmail());
+    }
+
+    @Test
+    public void testEmail_Valid() {
+        Member m = createValidMember();
+        m.setEmail("test@gmail.com");
+        assertEquals("test@gmail.com", m.getEmail());
+    }
+
+    // ============================================================
+    // 5. TEST password hashing
+    // ============================================================
+    @Test
+    public void testPasswordHash_NotPlaintext() {
+        Member m = createValidMember();
+        assertNotEquals("password123", m.getPasswordHash()); // Không lưu plaintext
+        assertEquals(128, m.getPasswordHash().length());      // SHA-512 = 128 hex chars
+    }
+
+    // ============================================================
+    // 6. TEST getRole()
+    // ============================================================
+    @Test
+    public void testGetRole() {
+        Member m = createValidMember();
+        assertEquals("member", m.getRole());
+    }
+}

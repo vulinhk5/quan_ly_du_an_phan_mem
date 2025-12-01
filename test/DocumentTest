@@ -1,0 +1,260 @@
+package Core;
+
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+
+public class DocumentTest {
+
+    // Helper: tạo Document hợp lệ
+    private Document createValidDoc() {
+        return new Document(
+                "D01",
+                "Title",
+                "Author",
+                "Publisher",
+                "Description",
+                "1234567890",
+                "EN",
+                100,
+                "http://image.com",
+                4.5,
+                10
+        );
+    }
+
+    // ============================================================
+    // 1. TEST documentId (EP + BVA)
+    // ============================================================
+    @Test
+    public void testDocumentId_Null() {
+        Document d = createValidDoc();
+        d.setDocumentId(null);
+        assertNull(d.getDocumentId());
+    }
+
+    @Test
+    public void testDocumentId_Empty() {
+        Document d = createValidDoc();
+        d.setDocumentId("");
+        assertEquals("", d.getDocumentId());
+    }
+
+    @Test
+    public void testDocumentId_Valid() {
+        Document d = createValidDoc();
+        d.setDocumentId("D99");
+        assertEquals("D99", d.getDocumentId());
+    }
+
+    // ============================================================
+    // 2. TEST title / author / publisher / language (EP + BVA)
+    // ============================================================
+
+    @Test
+    public void testTitle_Empty() {
+        Document d = createValidDoc();
+        d.setTitle("");
+        assertEquals("", d.getTitle());
+    }
+
+    @Test
+    public void testTitle_Valid() {
+        Document d = createValidDoc();
+        d.setTitle("A");
+        assertEquals("A", d.getTitle());
+    }
+
+    @Test
+    public void testAuthor_Empty() {
+        Document d = createValidDoc();
+        d.setAuthor("");
+        assertEquals("", d.getAuthor());
+    }
+
+    @Test
+    public void testPublisher_Empty() {
+        Document d = createValidDoc();
+        d.setPublisher("");
+        assertEquals("", d.getPublisher());
+    }
+
+    @Test
+    public void testLanguage_Empty() {
+        Document d = createValidDoc();
+        d.setLanguage("");
+        assertEquals("", d.getLanguage());
+    }
+
+    // ============================================================
+    // 3. TEST description length (EP + BVA)
+    // ============================================================
+
+    @Test
+    public void testDescription_500Chars() {
+        Document d = createValidDoc();
+        String desc = "a".repeat(500);
+        d.setDescription(desc);
+        assertEquals(500, d.getDescription().length());
+    }
+
+    @Test
+    public void testDescription_501Chars() {
+        Document d = createValidDoc();
+        String desc = "a".repeat(501);
+        d.setDescription(desc);
+        assertEquals(501, d.getDescription().length());
+    }
+
+    @Test
+    public void testDescription_Null() {
+        Document d = createValidDoc();
+        d.setDescription(null);
+        assertNull(d.getDescription());
+    }
+
+    // ============================================================
+    // 4. TEST ISBN (EP + BVA)
+    // ============================================================
+
+    @Test
+    public void testIsbn_9Digits_Invalid() {
+        Document d = createValidDoc();
+        d.setIsbn("123456789");
+        assertEquals(9, d.getIsbn().length());
+    }
+
+    @Test
+    public void testIsbn_10Digits_Valid() {
+        Document d = createValidDoc();
+        d.setIsbn("1234567890");
+        assertEquals(10, d.getIsbn().length());
+    }
+
+    @Test
+    public void testIsbn_13Digits_Valid() {
+        Document d = createValidDoc();
+        d.setIsbn("1234567890123");
+        assertEquals(13, d.getIsbn().length());
+    }
+
+    @Test
+    public void testIsbn_14Digits_Invalid() {
+        Document d = createValidDoc();
+        d.setIsbn("12345678901234");
+        assertEquals(14, d.getIsbn().length());
+    }
+
+    @Test
+    public void testIsbn_HasLetters() {
+        Document d = createValidDoc();
+        d.setIsbn("12A4567890");
+        assertTrue(d.getIsbn().contains("A"));
+    }
+
+    // ============================================================
+    // 5. TEST pageCount (EP + BVA)
+    // ============================================================
+
+    @Test
+    public void testPageCount_Negative() {
+        Document d = createValidDoc();
+        d.setPageCount(-1);
+        assertEquals(-1, d.getPageCount());
+    }
+
+    @Test
+    public void testPageCount_Zero() {
+        Document d = createValidDoc();
+        d.setPageCount(0);
+        assertEquals(0, d.getPageCount());
+    }
+
+    @Test
+    public void testPageCount_MinValid() {
+        Document d = createValidDoc();
+        d.setPageCount(1);
+        assertEquals(1, d.getPageCount());
+    }
+
+    // ============================================================
+    // 6. TEST averageRating (EP + BVA)
+    // ============================================================
+
+    @Test
+    public void testRating_Negative() {
+        Document d = createValidDoc();
+        d.setAverageRating(-0.1);
+        assertEquals(-0.1, d.getAverageRating());
+    }
+
+    @Test
+    public void testRating_Zero() {
+        Document d = createValidDoc();
+        d.setAverageRating(0.0);
+        assertEquals(0.0, d.getAverageRating());
+    }
+
+    @Test
+    public void testRating_MaxValid() {
+        Document d = createValidDoc();
+        d.setAverageRating(5.0);
+        assertEquals(5.0, d.getAverageRating());
+    }
+
+    @Test
+    public void testRating_AboveMax() {
+        Document d = createValidDoc();
+        d.setAverageRating(5.1);
+        assertEquals(5.1, d.getAverageRating());
+    }
+
+    // ============================================================
+    // 7. TEST amount (EP + BVA)
+    // ============================================================
+
+    @Test
+    public void testAmount_Negative() {
+        Document d = createValidDoc();
+        d.setAmount(-1);
+        assertEquals(-1, d.getAmount());
+    }
+
+    @Test
+    public void testAmount_Zero() {
+        Document d = createValidDoc();
+        d.setAmount(0);
+        assertEquals(0, d.getAmount());
+    }
+
+    @Test
+    public void testAmount_Positive() {
+        Document d = createValidDoc();
+        d.setAmount(10);
+        assertEquals(10, d.getAmount());
+    }
+
+    // ============================================================
+    // 8. coverImageUrl (EP)
+    // ============================================================
+
+    @Test
+    public void testCoverImage_Null() {
+        Document d = createValidDoc();
+        d.setCoverImageUrl(null);
+        assertNull(d.getCoverImageUrl());
+    }
+
+    @Test
+    public void testCoverImage_Empty() {
+        Document d = createValidDoc();
+        d.setCoverImageUrl("");
+        assertEquals("", d.getCoverImageUrl());
+    }
+
+    @Test
+    public void testCoverImage_ValidUrl() {
+        Document d = createValidDoc();
+        d.setCoverImageUrl("http://example.com");
+        assertEquals("http://example.com", d.getCoverImageUrl());
+    }
+}
