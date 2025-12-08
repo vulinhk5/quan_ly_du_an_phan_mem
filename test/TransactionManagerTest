@@ -1,0 +1,121 @@
+package Database;
+
+import Core.Document;
+import Core.User;
+
+import javafx.scene.control.Alert;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+
+import static Utility.AlertHelper.showAlert;
+
+public class TransactionManagerBorrowTest {
+
+    private User mockUser;
+    private Document mockDoc;
+
+    @BeforeEach
+    void setup() {
+        mockUser = mock(User.class);
+        mockDoc = mock(Document.class);
+
+        when(mockUser.getUserId()).thenReturn("U001");
+        when(mockDoc.getDocumentId()).thenReturn("D001");
+    }
+
+    // ================================================================
+    // EP1 – Borrow thành công (amount > 0)
+    // ================================================================
+    @Test
+    void testBorrowSuccess() throws Exception {
+
+        when(mockDoc.getAmount()).thenReturn(5);
+
+        Connection mockConn = mock(Connection.class);
+        PreparedStatement mockUpdateStmt = mock(PreparedStatement.class);
+        PreparedStatement mockInsertStmt = mock(PreparedStatement.class);
+
+        when(mockConn.prepareStatement(startsWith("UPDATE documents"))).thenReturn(mockUpdateStmt);
+        when(mockConn.prepareStatement(startsWith("INSERT INTO transactions"))).thenReturn(mockInsertStmt);
+
+        try (MockedStatic<Database> mockDB = mockStatic(Database.class);
+             MockedStatic<Utility.AlertHelper> mockAlert = mockStatic(Utility.AlertHelper.class)) {
+
+            Database fakeDB = mock(Database.class);
+            mockDB.when(Database::getInstance).thenReturn(fakeDB);
+            when(fakeDB.getConnection()).thenReturn(mockConn);
+
+            TransactionManager.borrowDocument(mockUser, mockDoc);
+
+            // UPDATE amount giảm 1
+            verify(mockUpdateStmt, times(1)).executeUpdate();
+
+            // Insert transaction
+            verify(mockInsertStmt, times(1)).executeUpdate();
+
+            // Alert Success
+            mockAlert.verify(
+                    () -> showAlert(eq(Alert.AlertType.INFORMATION), anyString(), anyString()),
+                    times(1)
+            );
+
+            verify(mockConn, times(1)).close();
+        }
+    }
+
+    // ================================================================
+    // BVA – amount = 0 → không cho mượn
+    // ================================================================
+    @Test
+    void testBorrowAmountZero() throws Exception {
+
+        when(mockDoc.getAmount()).thenReturn(0);
+
+        try (MockedStatic<Utility.AlertHelper> mockAlert = mockStatic(Utility.AlertHelper.class)) {
+
+            TransactionManager.borrowDocument(mockUser, mockDoc);
+
+            // Không gọi DB
+            mockAlert.verify(
+                    () -> showAlert(eq(Alert.AlertType.WARNING), anyString(), contains("not available")),
+                    times(1)
+            );
+        }
+    }
+
+    // ================================================================
+    // EP3 – SQLException → showAlert ERROR
+    // ================================================================
+    @Test
+    void testBorrowSQLException() throws Exception {
+
+        when(mockDoc.getAmount()).thenReturn(3);
+
+        Connection mockConn = mock(Connection.class);
+        when(mockConn.prepareStatement(anyString())).thenThrow(new SQLException("DB error"));
+
+        try (MockedStatic<Database> mockDB = mockStatic(Database.class);
+             MockedStatic<Utility.AlertHelper> mockAlert = mockStatic(Utility.AlertHelper.class)) {
+
+            Database fakeDB = mock(Database.class);
+            mockDB.when(Database::getInstance).thenReturn(fakeDB);
+            when(fakeDB.getConnection()).thenReturn(mockConn);
+
+            TransactionManager.borrowDocument(mockUser, mockDoc);
+
+            mockAlert.verify(
+                    () -> showAlert(eq(Alert.AlertType.ERROR), anyString(), contains("error")),
+                    times(1)
+            );
+        }
+    }
+}
