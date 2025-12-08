@@ -1,0 +1,124 @@
+package UpdateUserInfo;
+
+import Core.User;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+import static SessionManager.SessionManager.currentUser;
+import static Database.UserManager.updateUser;
+import static Utility.SHA.convertToSHA512;
+
+public class UpdateUserInfoControllerTest {
+
+    private UpdateUserInfoController controller;
+    private User mockUser;
+
+    @BeforeEach
+    void setup() {
+        controller = new UpdateUserInfoController();
+
+        controller.userId = new TextField();
+        controller.fullName = new TextField();
+        controller.userName = new TextField();
+        controller.passwordHash = new TextField();
+        controller.email = new TextField();
+        controller.role = new TextField();
+
+        controller.oldPassword = new PasswordField();
+        controller.newPassword = new PasswordField();
+        controller.reNewPassword = new PasswordField();
+
+        // Fake currentUser
+        mockUser = mock(User.class);
+        try (MockedStatic<SessionManager.SessionManager> mockSession = mockStatic(SessionManager.SessionManager.class)) {
+            mockSession.when(() -> SessionManager.SessionManager.currentUser).thenReturn(mockUser);
+        }
+    }
+
+    // ============================================================
+    // TC1: Sai mật khẩu cũ
+    // ============================================================
+    @Test
+    void testIncorrectOldPassword() {
+
+        controller.oldPassword.setText("wrongOld");
+        controller.newPassword.setText("newPass123");
+        controller.reNewPassword.setText("newPass123");
+
+        try (
+            MockedStatic<SHA> mockSHA = mockStatic(SHA.class);
+            MockedStatic<Database.UserManager> mockUserMgr = mockStatic(Database.UserManager.class)
+        ) {
+            // Hash old password nhập sai
+            mockSHA.when(() -> convertToSHA512("wrongOld")).thenReturn("WRONG_HASH");
+
+            // Hash trong DB khác
+            when(mockUser.getPasswordHash()).thenReturn("CORRECT_HASH");
+
+            controller.onChangePasswordButtonClicked();
+
+            // Không được update user
+            mockUserMgr.verify(() -> updateUser(any()), times(0));
+        }
+    }
+
+    // ============================================================
+    // TC2: New password và re-enter không trùng
+    // ============================================================
+    @Test
+    void testPasswordMismatch() {
+
+        controller.oldPassword.setText("correctOld");
+        controller.newPassword.setText("new1");
+        controller.reNewPassword.setText("new2");  // mismatch
+
+        try (
+            MockedStatic<SHA> mockSHA = mockStatic(SHA.class);
+            MockedStatic<Database.UserManager> mockUserMgr = mockStatic(Database.UserManager.class)
+        ) {
+            mockSHA.when(() -> convertToSHA512("correctOld")).thenReturn("HASHED_OLD");
+            when(mockUser.getPasswordHash()).thenReturn("HASHED_OLD");
+
+            controller.onChangePasswordButtonClicked();
+
+            // Không update
+            mockUserMgr.verify(() -> updateUser(any()), times(0));
+            verify(mockUser, times(0)).setPasswordHash(any());
+        }
+    }
+
+    // ============================================================
+    // TC3: Đổi mật khẩu thành công
+    // ============================================================
+    @Test
+    void testSuccessfulPasswordChange() {
+
+        controller.oldPassword.setText("oldPass");
+        controller.newPassword.setText("newPass123");
+        controller.reNewPassword.setText("newPass123");
+
+        try (
+            MockedStatic<SHA> mockSHA = mockStatic(SHA.class);
+            MockedStatic<Database.UserManager> mockDB = mockStatic(Database.UserManager.class)
+        ) {
+            mockSHA.when(() -> convertToSHA512("oldPass")).thenReturn("OLD_HASH");
+            when(mockUser.getPasswordHash()).thenReturn("OLD_HASH");
+
+            // Thực thi
+            controller.onChangePasswordButtonClicked();
+
+            // Check setPasswordHash(newPass)
+            verify(mockUser, times(1)).setPasswordHash("newPass123");
+
+            // Check updateUser(user)
+            mockDB.verify(() -> updateUser(mockUser), times(1));
+        }
+    }
+}

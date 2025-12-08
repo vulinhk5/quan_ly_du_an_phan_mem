@@ -1,0 +1,146 @@
+package Signup;
+
+import Core.Member;
+import Core.User;
+import SceneManager.SceneManager;
+import javafx.scene.control.TextField;
+import javafx.scene.control.PasswordField;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+import static Database.UserManager.*;
+
+public class SignupControllerTest {
+
+    private SignupController controller;
+
+    @BeforeEach
+    void setup() {
+        controller = new SignupController();
+
+        // Gán thủ công các field FXML
+        controller.fullName = new TextField();
+        controller.email = new TextField();
+        controller.userName = new TextField();
+        controller.password = new PasswordField();
+        controller.rePassword = new PasswordField();
+    }
+
+    // ===== Helper =====
+    private void fillValidData() {
+        controller.fullName.setText("Nguyen Van A");
+        controller.email.setText("test@example.com");
+        controller.userName.setText("user123");
+        controller.password.setText("Password1");
+        controller.rePassword.setText("Password1");
+    }
+
+
+
+    @Test
+    void testFullNameEmpty() {
+        fillValidData();
+        controller.fullName.setText("");
+
+        controller.onMouseClickedOnSignup();
+
+        // Khi lỗi, không được tạo user
+        assertNull(SignupController.getUser());
+    }
+
+    @Test
+    void testEmailEmpty() {
+        fillValidData();
+        controller.email.setText("");
+
+        controller.onMouseClickedOnSignup();
+
+        assertNull(SignupController.getUser());
+    }
+
+    @Test
+    void testUsernameEmpty() {
+        fillValidData();
+        controller.userName.setText("");
+
+        controller.onMouseClickedOnSignup();
+
+        assertNull(SignupController.getUser());
+    }
+
+    @Test
+    void testPasswordMismatch() {
+        fillValidData();
+        controller.rePassword.setText("WrongPass");
+
+        controller.onMouseClickedOnSignup();
+
+        assertNull(SignupController.getUser());
+    }
+
+    @Test
+    void testUsernameTaken() {
+        fillValidData();
+
+        try (
+            MockedStatic<UserManager> mocked = mockStatic(UserManager.class)
+        ) {
+            mocked.when(() -> isUsernameTaken("user123")).thenReturn(true);
+            mocked.when(() -> isEmailTaken("test@example.com")).thenReturn(false);
+
+            controller.onMouseClickedOnSignup();
+
+            assertNull(SignupController.getUser());
+        }
+    }
+
+    @Test
+    void testEmailTaken() {
+        fillValidData();
+
+        try (
+            MockedStatic<UserManager> mocked = mockStatic(UserManager.class)
+        ) {
+            mocked.when(() -> isUsernameTaken("user123")).thenReturn(false);
+            mocked.when(() -> isEmailTaken("test@example.com")).thenReturn(true);
+
+            controller.onMouseClickedOnSignup();
+
+            assertNull(SignupController.getUser());
+        }
+    }
+
+    @Test
+    void testSuccessfulSignup() {
+
+        fillValidData();
+
+        try (
+            MockedStatic<UserManager> mockedUser = mockStatic(UserManager.class);
+            MockedStatic<SignupVerificationEmail> mockedEmail = mockStatic(SignupVerificationEmail.class);
+            MockedStatic<SceneManager> mockedScene = mockStatic(SceneManager.class)
+        ) {
+            mockedUser.when(() -> isUsernameTaken("user123")).thenReturn(false);
+            mockedUser.when(() -> isEmailTaken("test@example.com")).thenReturn(false);
+            mockedUser.when(UserManager::newUserId).thenReturn(100);
+
+            SceneManager mockSceneMgr = mock(SceneManager.class);
+            mockedScene.when(SceneManager::getInstance).thenReturn(mockSceneMgr);
+
+            controller.onMouseClickedOnSignup();
+
+            User created = SignupController.getUser();
+            assertNotNull(created);
+            assertEquals("user123", created.getUsername());
+            assertEquals("test@example.com", created.getEmail());
+            assertEquals("Nguyen Van A", created.getFullName());
+            assertEquals(100, created.getUserId());
+
+            verify(mockSceneMgr).switchTo(SceneManager.VERIFICATION);
+        }
+    }
+}

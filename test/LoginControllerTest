@@ -1,0 +1,165 @@
+package Login;
+
+import Core.User;
+import SceneManager.SceneManager;
+import SessionManager.SessionManager;
+
+import javafx.scene.control.TextField;
+import javafx.scene.control.PasswordField;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+import static Database.UserManager.*;
+import static Utility.SHA.convertToSHA512;
+
+public class LoginControllerTest {
+
+    private LoginController controller;
+
+    @BeforeEach
+    void setup() {
+        controller = new LoginController();
+        controller.userName = new TextField();
+        controller.password = new PasswordField();
+    }
+
+    // =============================
+    // TC1 - Username không tồn tại
+    // =============================
+    @Test
+    void testUsernameNotFound() {
+
+        controller.userName.setText("unknown");
+        controller.password.setText("anything");
+
+        try (
+            MockedStatic<UserManager> mockUserMgr = mockStatic(UserManager.class)
+        ) {
+            mockUserMgr.when(() -> isUsernameTaken("unknown")).thenReturn(false);
+
+            controller.onMouseClickedOnLogin();
+
+            // Không được gọi getUser()
+            mockUserMgr.verify(() -> getUser("unknown"), times(0));
+        }
+    }
+
+    // =============================
+    // TC2 - Sai mật khẩu
+    // =============================
+    @Test
+    void testIncorrectPassword() {
+
+        controller.userName.setText("user123");
+        controller.password.setText("wrongpass");
+
+        User mockUser = mock(User.class);
+
+        try (
+            MockedStatic<UserManager> mockUserMgr = mockStatic(UserManager.class);
+            MockedStatic<SHA> mockSHA = mockStatic(SHA.class)
+        ) {
+            mockUserMgr.when(() -> isUsernameTaken("user123")).thenReturn(true);
+            mockUserMgr.when(() -> getUser("user123")).thenReturn(mockUser);
+
+            // User password hash trong DB
+            when(mockUser.getPasswordHash()).thenReturn("HASHED_CORRECT");
+
+            // Hash password nhập vào → KHÁC
+            mockSHA.when(() -> convertToSHA512("wrongpass"))
+                   .thenReturn("HASHED_INCORRECT");
+
+            controller.onMouseClickedOnLogin();
+
+            // Không login → không set Session
+            assertNull(SessionManager.currentUser);
+        }
+    }
+
+    // =============================
+    // TC3 - Đăng nhập thành công
+    // =============================
+    @Test
+    void testSuccessfulLogin() {
+
+        controller.userName.setText("user123");
+        controller.password.setText("mypassword");
+
+        User mockUser = mock(User.class);
+
+        try (
+            MockedStatic<UserManager> mockUserMgr = mockStatic(UserManager.class);
+            MockedStatic<SHA> mockSHA = mockStatic(SHA.class);
+            MockedStatic<SceneManager> mockScene = mockStatic(SceneManager.class)
+        ) {
+            mockUserMgr.when(() -> isUsernameTaken("user123")).thenReturn(true);
+            mockUserMgr.when(() -> getUser("user123")).thenReturn(mockUser);
+
+            when(mockUser.getPasswordHash()).thenReturn("HASHED_CORRECT");
+
+            mockSHA.when(() -> convertToSHA512("mypassword"))
+                   .thenReturn("HASHED_CORRECT");
+
+            // Mock SceneManager
+            SceneManager fakeScene = mock(SceneManager.class);
+            mockScene.when(SceneManager::getInstance).thenReturn(fakeScene);
+
+            controller.onMouseClickedOnLogin();
+
+            // 1. Kiểm tra đã set SessionManager.currentUser
+            assertEquals(mockUser, SessionManager.currentUser);
+
+            // 2. Kiểm tra chuyển sang DASHBOARD
+            verify(fakeScene, times(1)).switchTo(SceneManager.DASHBOARD);
+        }
+    }
+
+    // =============================
+    // TC4 - Password rỗng
+    // =============================
+    @Test
+    void testEmptyPassword() {
+
+        controller.userName.setText("user123");
+        controller.password.setText("");
+
+        User mockUser = mock(User.class);
+
+        try (
+            MockedStatic<UserManager> mockUserMgr = mockStatic(UserManager.class)
+        ) {
+            mockUserMgr.when(() -> isUsernameTaken("user123")).thenReturn(true);
+            mockUserMgr.when(() -> getUser("user123")).thenReturn(mockUser);
+
+            controller.onMouseClickedOnLogin();
+
+            // Không login
+            assertNull(SessionManager.currentUser);
+        }
+    }
+
+    // =============================
+    // TC5 - Username rỗng
+    // =============================
+    @Test
+    void testEmptyUsername() {
+
+        controller.userName.setText("");
+        controller.password.setText("somepass");
+
+        try (
+            MockedStatic<UserManager> mockUserMgr = mockStatic(UserManager.class)
+        ) {
+            mockUserMgr.when(() -> isUsernameTaken("")).thenReturn(false);
+
+            controller.onMouseClickedOnLogin();
+
+            assertNull(SessionManager.currentUser);
+        }
+    }
+}

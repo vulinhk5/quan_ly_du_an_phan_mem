@@ -1,0 +1,152 @@
+package DocumentManager;
+
+import Core.Document;
+import SceneManager.SceneManager;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+import static Database.TransactionManager.borrowDocument;
+import static SessionManager.SessionManager.currentUser;
+
+public class DocumentManagerControllerTest {
+
+    private DocumentManagerController controller;
+
+    @BeforeEach
+    void setup() {
+        controller = new DocumentManagerController();
+
+        controller.documentList = new VBox();
+        controller.documentCover = new ImageView();
+        controller.documentTitle = new Label();
+        controller.documentAuthor = new Label();
+        controller.documentPublisher = new Label();
+        controller.documentDescription = new Label();
+        controller.documentIsbn = new Label();
+        controller.documentLanguage = new Label();
+        controller.documentRating = new Label();
+        controller.documentPageCount = new Label();
+        controller.documentAmount = new Label();
+        controller.borrowButton = new Button();
+    }
+
+    // ============================================================
+    // EP1 – Hiển thị document hợp lệ
+    // ============================================================
+    @Test
+    void testDisplayDocumentDetails() {
+
+        Document doc = new Document(
+                "1",
+                "Test Title",
+                "Author A",
+                "Publisher X",
+                "ISBN1234",
+                "EN",
+                4.5,
+                120,
+                10,
+                "https://example.com/img.png"
+        );
+
+        // Gọi hàm private qua reflection
+        invokeDisplayDetails(doc);
+
+        assertEquals("Test Title", controller.documentTitle.getText());
+        assertEquals("Author A", controller.documentAuthor.getText());
+        assertEquals("Publisher X", controller.documentPublisher.getText());
+        assertEquals("ISBN: ISBN1234", controller.documentIsbn.getText());
+        assertEquals("Language: EN", controller.documentLanguage.getText());
+        assertEquals("Rating: 4.5", controller.documentRating.getText());
+        assertEquals("Pages: 120", controller.documentPageCount.getText());
+        assertEquals("Amount: 10", controller.documentAmount.getText());
+
+        // Button trở nên visible
+        assertTrue(controller.borrowButton.isVisible());
+
+        // currentChoosingDocument được set
+        assertEquals(doc, DocumentManagerController.currentChoosingDocument);
+    }
+
+    // ============================================================
+    // BVA1 – amount = 0
+    // ============================================================
+    @Test
+    void testDisplayDocumentDetails_AmountZero() {
+
+        Document doc = new Document(
+                "2", "B", "A", "P", "ISBN0",
+                "VN", 3.0, 50, 0,
+                "https://example.com/img.png"
+        );
+
+        invokeDisplayDetails(doc);
+
+        assertEquals("Amount: 0", controller.documentAmount.getText());
+    }
+
+    // ============================================================
+    // EP2 – Không gọi borrowDocument khi chưa chọn document
+    // ============================================================
+    @Test
+    void testOnBorrowButtonClicked_NoDocumentSelected() {
+
+        DocumentManagerController.currentChoosingDocument = null;
+
+        try (MockedStatic<Database.TransactionManager> mockTxn
+                     = mockStatic(Database.TransactionManager.class)) {
+
+            controller.onBorrowButtonClicked();
+
+            mockTxn.verify(() -> borrowDocument(any(), any()), times(0));
+        }
+    }
+
+    // ============================================================
+    // EP3 – Gọi borrowDocument khi document được chọn
+    // ============================================================
+    @Test
+    void testOnBorrowButtonClicked_WithDocumentSelected() {
+
+        Document doc = mock(Document.class);
+        DocumentManagerController.currentChoosingDocument = doc;
+        Object fakeUser = new Object();
+
+        try (
+            MockedStatic<Database.TransactionManager> mockTxn
+                    = mockStatic(Database.TransactionManager.class);
+            MockedStatic<SessionManager.SessionManager> mockSession
+                    = mockStatic(SessionManager.SessionManager.class)
+        ) {
+            mockSession.when(() -> SessionManager.SessionManager.currentUser)
+                       .thenReturn(fakeUser);
+
+            controller.onBorrowButtonClicked();
+
+            mockTxn.verify(() -> borrowDocument(fakeUser, doc), times(1));
+        }
+    }
+
+    // ============================================================
+    // Helper – gọi hàm private
+    // ============================================================
+    private void invokeDisplayDetails(Document doc) {
+        try {
+            var method = DocumentManagerController.class
+                    .getDeclaredMethod("displayDocumentDetails", Document.class);
+            method.setAccessible(true);
+            method.invoke(controller, doc);
+        } catch (Exception e) {
+            fail("Reflection failed: " + e.getMessage());
+        }
+    }
+}
