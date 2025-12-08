@@ -5,7 +5,7 @@
 - Quản lý tài liệu (Document)
 - Kiểm tra số lượng tài liệu để phục vụ cho chức năng mượn/trả
 - Phân quyền dựa trên role
-Yêu cầu phi chức năng
+# Yêu cầu phi chức năng
 - Hiệu năng: Các thao tác được xử lý trong vòng dưới 5 giây
 - Bảo mật: Mật khẩu phải dùng SHA-512
 - Khả dụng: Hệ thống chạy 24/7
